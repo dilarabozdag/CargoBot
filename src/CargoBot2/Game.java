@@ -1,20 +1,25 @@
 package CargoBot2;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Game {
 
 	public Board board;
 	public LevelReader lr;
-
-	public Game() {
+	private HashMap<String, Function> functions;
+	
+	public Game(HashMap<String, Function> functions) {
 		lr = new LevelReader();
+		this.functions = functions;
 	}
 
 	public static void main(String[] args) throws IOException {
 		Scanner scanner= new Scanner(System.in);
-		Game game = new Game();
+		CommandReader.read();
+		Game game = new Game(CommandReader.functions);
+		
 		reachTheFile(scanner, game);
 		game.fillTheBoard();
 		game.board.printTarget();
@@ -22,7 +27,7 @@ public class Game {
 		System.out.println("----------------------------------------");
 		System.out.println("Board");
 		System.out.println("----------------------------------------");
-		runCommandList( game);
+		game.run();
 	}
 
 	private static void reachTheFile(Scanner scanner, Game game) {
@@ -53,41 +58,12 @@ public class Game {
 		board = new Board(lr.width, lr.initial, lr.target);
 	}
 
-	private static void runCommandList( Game game) throws IOException {
-		boolean error = false;
-		boolean stop = false;
-		String currentCommand = "";
-		CommandReader.read();
-		while (!stop) {
-			game.board.printBoard();
-			System.out.println("FUNCTION");
-			for(int i = 0; i < CommandReader.commands.size(); i++) {
-				currentCommand = CommandReader.commands.get(i);
-
-				if(currentCommand.equals("Right")){
-					if (!game.board.crane.goRight(game.board.width)) //if the crane cannot go right-- 
-						error = true;										//give invalid command error
-				}else if(currentCommand.equals("Left")) {
-					if(!game.board.crane.goLeft()) 			
-						error = true;
-				}else if(currentCommand.equals("Down")) {
-
-					game.board.crane.goDown(game.board.current);
-				}else if(currentCommand.equals("Stop")) {			// there is something WRONG with this!
-					game.board.printBoard();
-					game.compareCurrentWithTarget();
-					stop = true;
-				}else {
-					error = true;
-					System.out.println("Command -" + currentCommand + "- is invalid");
-				}if(error || stop) {    // if there is error/stop - don't do the rest of the command list
-					CommandReader.commands.clear();
-					CommandReader.commands.add("Stop");
-					break;
-				}
-			}
-			error = false;
-		}
+	private void run() throws IOException {
+		runFunction("Main");
+	}
+	
+	public void runFunction(String name) {
+		functions.get(name).execute();
 	}
 
 	public void compareCurrentWithTarget() {
