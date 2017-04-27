@@ -1,19 +1,18 @@
 package CargoBot2;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Game {
 
 	public Board board;
 	public LevelReader lr;
-	public CommandReader cr;
 
 	public Game() {
 		lr = new LevelReader();
-		cr = new CommandReader();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		Scanner scanner= new Scanner(System.in);
 		Game game = new Game();
 		reachTheFile(scanner, game);
@@ -23,7 +22,7 @@ public class Game {
 		System.out.println("----------------------------------------");
 		System.out.println("Board");
 		System.out.println("----------------------------------------");
-		runCommandList(scanner, game);
+		runCommandList( game);
 	}
 
 	private static void reachTheFile(Scanner scanner, Game game) {
@@ -54,16 +53,17 @@ public class Game {
 		board = new Board(lr.width, lr.initial, lr.target);
 	}
 
-	private static void runCommandList(Scanner scanner, Game game) {
+	private static void runCommandList( Game game) throws IOException {
 		boolean error = false;
 		boolean stop = false;
 		String currentCommand = "";
+		CommandReader.read();
 		while (!stop) {
 			game.board.printBoard();
+			System.out.println("FUNCTION");
+			for(int i = 0; i < CommandReader.commands.size(); i++) {
+				currentCommand = CommandReader.commands.get(i);
 
-			String[] command = getCommandsFromUser(scanner);
-			for(int i = 0; i < command.length; i++) {
-				currentCommand = command[i];
 				if(currentCommand.equals("Right")){
 					if (!game.board.crane.goRight(game.board.width)) //if the crane cannot go right-- 
 						error = true;										//give invalid command error
@@ -71,15 +71,18 @@ public class Game {
 					if(!game.board.crane.goLeft()) 			
 						error = true;
 				}else if(currentCommand.equals("Down")) {
+
 					game.board.crane.goDown(game.board.current);
 				}else if(currentCommand.equals("Stop")) {			// there is something WRONG with this!
+					game.board.printBoard();
 					game.compareCurrentWithTarget();
 					stop = true;
 				}else {
 					error = true;
 					System.out.println("Command -" + currentCommand + "- is invalid");
-				}if(error || stop) {									// if there is error/stop - don't do the rest of the command list
-					command = new String[0];
+				}if(error || stop) {    // if there is error/stop - don't do the rest of the command list
+					CommandReader.commands.clear();
+					CommandReader.commands.add("Stop");
 					break;
 				}
 			}
@@ -87,16 +90,8 @@ public class Game {
 		}
 	}
 
-	private static String[] getCommandsFromUser(Scanner scanner) {
-
-		System.out.println("Enter list of commands: ");
-		String commandStr = scanner.nextLine();
-		String[] command = commandStr.split(" ");
-		return command;
-	}
-
 	public void compareCurrentWithTarget() {
-		board.current[board.crane.pos[0]][board.crane.pos[1]] = null;  //target has no crane so it is easier to compare when we delete it in current
+		board.current[board.crane.x][board.crane.y] = null;  //target has no crane so it is easier to compare when we delete it in current
 		for (int row = 0; row < board.LENGTH; row++) {
 			for (int col = 0; col < board.width; col++) {
 				if (board.target[row][col] != null) {						//if this index is not empty- if there is a box in target table--

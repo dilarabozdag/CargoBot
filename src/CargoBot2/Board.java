@@ -57,6 +57,6 @@ public class Board {
 			for (int col = 0; col < width; col++) 
 				if (current[row][col] instanceof Crane) 
 					current[row][col] = null;
-		current[crane.pos[0]][crane.pos[1]] = crane;
+		current[crane.x][crane.y] = crane;
 	}
 }
