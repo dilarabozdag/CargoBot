@@ -8,17 +8,20 @@ public class Game {
 
 	public Board board;
 	public LevelReader lr;
+	public CommandReader cr;
 	private HashMap<String, Function> functions;
-	
+
+
 	public Game(HashMap<String, Function> functions) {
 		lr = new LevelReader();
+		cr = new CommandReader();
 		this.functions = functions;
 	}
 
 	public static void main(String[] args) throws IOException {
 		Scanner scanner= new Scanner(System.in);
-		CommandReader.read();
-		Game game = new Game(CommandReader.functions);
+	
+		Game game =  new Game(CommandReader.functions);
 		
 		reachTheFile(scanner, game);
 		game.fillTheBoard();
@@ -27,7 +30,12 @@ public class Game {
 		System.out.println("----------------------------------------");
 		System.out.println("Board");
 		System.out.println("----------------------------------------");
+		game.board.printBoard();
+		
+		reachTheCommandFile(scanner, game);
+		//System.out.println(CommandReader.functions);
 		game.run();
+		
 	}
 
 	private static void reachTheFile(Scanner scanner, Game game) {
@@ -58,12 +66,31 @@ public class Game {
 		board = new Board(lr.width, lr.initial, lr.target);
 	}
 
+	private static void reachTheCommandFile(Scanner scanner, Game game) throws IOException {
+		String commandFile = "Commands";
+		commandFile = getKeysForCommandFile(scanner, commandFile);
+		commandFile += ".cb";
+		game.cr.read(commandFile);
+	}
+
+	private static String getKeysForCommandFile(Scanner scanner, String commandFile) {
+		System.out.println("Choose the first key word for command file name: (H), (M), (E)");
+		String hardness = scanner.next();
+		if (hardness.equals("E") || hardness.equals("M") || hardness.equals("H"))
+			commandFile += hardness;
+		System.out.println("Choose the second key word for command file name: (1), (2), (3)");
+		String levelNo = scanner.next();
+		scanner.nextLine(); // Consume newline left-over
+		commandFile += levelNo;
+		return commandFile;
+	}
+
 	private void run() throws IOException {
 		runFunction("Main");
 	}
-	
+
 	public void runFunction(String name) {
-		functions.get(name).execute();
+		CommandReader.functions.get(name).execute(this);
 	}
 
 	public void compareCurrentWithTarget() {

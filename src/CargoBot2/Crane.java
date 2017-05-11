@@ -10,7 +10,7 @@ public class Crane extends Item {
 		x = 0;    	 // x of crane
 		y = 0;		 // y of crane
 	}
-
+/*
 	public boolean goRight(int rightLimit){
 		if(y + 1 < rightLimit){		// if there is a place to go right
 			y = y + 1;
@@ -48,5 +48,5 @@ public class Crane extends Item {
 			}
 		}
 	}
-
+*/
 }

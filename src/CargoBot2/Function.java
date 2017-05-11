@@ -12,10 +12,16 @@ public class Function {
 		this.commands = commands;
 	}
 
-	public void execute() {
+	public void execute(Game game) {
 		for (Command cmd : commands) {
-			cmd.execute();
+			cmd.execute(game);
+			//game.board.printBoard();
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Function [name=" + name + ", commands=" + commands + "]";
 	}
 	
 	

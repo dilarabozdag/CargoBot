@@ -8,9 +8,9 @@ import java.util.*;
 public class CommandReader {
 	public static HashMap<String, Function> functions;
 	
-	public static void read() throws IOException {
+	public static void read(String commandFile) throws IOException {
 		functions = new HashMap<>();
-		BufferedReader br = new BufferedReader(new FileReader("Commands.cb"));
+		BufferedReader br = new BufferedReader(new FileReader(commandFile));
 		String line;
 		while ((line = br.readLine()) != null) {
 			String[] lineElement = line.split("-");
