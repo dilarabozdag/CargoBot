@@ -1,0 +1,3 @@
+WidthOfTable:3
+Initial:redbox-1-1:redbox-2-1:redbox-4-1:greenbox-3-1:greenbox-5-1:greenbox-6-1
+Target:redbox-6-0:redbox-5-0:redbox-4-0:greenbox-4-2:greenbox-5-2:greenbox-6-2
